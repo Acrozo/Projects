@@ -20,7 +20,7 @@ BonusDistanceUpgrade = pygame.image.load("images/distanceupgrade.png")
 run = True
 _BombDown = False
 Exploding = False
-Bricks_Printed = False
+Bricks_Generated = False
 PassableRight = True
 PassableLeft = True
 PassableUp = True
@@ -46,7 +46,7 @@ def Bomber():
 
 
 def CreateBackground():
-    global Bricks_Printed
+    global Bricks_Generated
     for initialX in range(0, 608, 32):
         for initialY in range(0, 608, 32):
             win.blit(GroundBlock, (initialX, initialY))
@@ -65,14 +65,14 @@ def CreateBackground():
                 Not_Allowed_Pos.append([break1, break2])
                 win.blit(Wall, (break1, break2))
 
-    if Bricks_Printed == False:
+    if Bricks_Generated == False:
         for brickwall in range(0, 608, 32):
             for brickwall1 in range(0, 608, 32):
                 if not [brickwall, brickwall1] in Not_Allowed_Walls:
                     if random.randint(0, 1) == 1:
                         BrickWallList.append([brickwall, brickwall1])
 
-    Bricks_Printed = True
+    Bricks_Generated = True
 
     for x in BonusList:
         win.blit(BonusDistanceUpgrade, x)
@@ -99,7 +99,7 @@ def Explode():
 
     if ExplosionTime + 2000 > Time1 and Exploding == True:
         for distance in range(0, BombRange, 1):
-            if not [BombPosX+32*distance, BombPosY] in Not_Allowed_Pos and PassableRight == True:
+            if not [BombPosX+32*distance, BombPosY] in Not_Allowed_Pos and PassableRight:
                 for row in BrickWallList.copy():
                     if row == [BombPosX+32*distance, BombPosY]:
                         BrickWallList.remove(row)
@@ -110,7 +110,7 @@ def Explode():
             else:
                 PassableRight = False
 
-            if not [BombPosX-32*distance, BombPosY] in Not_Allowed_Pos and PassableLeft == True:
+            if not [BombPosX-32*distance, BombPosY] in Not_Allowed_Pos and PassableLeft:
                 for row in BrickWallList.copy():
                     if row == [BombPosX-32*distance, BombPosY]:
                         BrickWallList.remove(row)
@@ -121,7 +121,7 @@ def Explode():
             else:
                 PassableLeft = False
 
-            if not [BombPosX, BombPosY-32*distance] in Not_Allowed_Pos and PassableDown == True:
+            if not [BombPosX, BombPosY-32*distance] in Not_Allowed_Pos and PassableDown:
                 for row in BrickWallList.copy():
                     if row == [BombPosX, BombPosY-32*distance]:
                         BrickWallList.remove(row)
@@ -132,7 +132,7 @@ def Explode():
             else:
                 PassableDown = False
 
-            if not [BombPosX, BombPosY+32*distance] in Not_Allowed_Pos and PassableUp == True:
+            if not [BombPosX, BombPosY+32*distance] in Not_Allowed_Pos and PassableUp:
                 for row in BrickWallList.copy():
                     if row == [BombPosX, BombPosY+32*distance]:
                         BrickWallList.remove(row)
@@ -145,8 +145,8 @@ def Explode():
 
     else:
         Exploding = False
-        PassableUp= True
-        PassableDown= True
+        PassableUp = True
+        PassableDown = True
         PassableRight = True
         PassableLeft = True
 
