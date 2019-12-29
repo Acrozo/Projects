@@ -29,11 +29,6 @@ PassableDown = True
 BombRange = 3
 BombAmmount = 0
 
-initialX = 0
-initialY = 0
-_initialX = 0
-_initialY = 0
-velocity = 32
 way = 0
 posX = 32
 posY = 32
@@ -41,7 +36,7 @@ posY = 32
 clock = pygame.time.Clock()
 
 Not_Allowed_Pos = []
-Not_Allowed_Walls = [[32, 32], [64, 32], [32, 64], [64, 64]]
+Not_Allowed_Walls = [[32, 32], [64, 32], [32, 64]]
 BrickWallList = []
 BonusList = []
 
