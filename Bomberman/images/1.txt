@@ -1,0 +1,25 @@
+pygame.init()
+
+win = pygame.display.set_mode((608, 608))
+
+pygame.display.set_caption("Bomberman")
+
+GroundBlock = pygame.image.load("images/ground.png")
+Wall = pygame.image.load("images/WALL.png")
+BreakableWall = pygame.image.load("images/Breakable-Wall.png")
+Bomberman1 = [pygame.image.load("images/bomber-down.png"), pygame.image.load("images/bomber-up.png"),
+              pygame.image.load("images/bomber-right.png"), pygame.image.load("images/bomber-left.png")]
+Bomb = pygame.image.load("images/bomb.png")
+Explosion = pygame.image.load("images/explosion.png")
+BonusDistanceUpgrade = pygame.image.load("images/distanceupgrade.png")
+Logo = pygame.image.load("images/IntroLogo.png")
+StartButton = pygame.image.load("images/startbutton1.png")
+QuitButton = pygame.image.load("images/quit1.png")
+Selector = pygame.image.load("images/selectoricon.png")
+
+Icon = pygame.image.load("images/icon.png")
+music = pygame.mixer.music.load("sounds/Intro.mp3")
+BombSound = pygame.mixer.Sound("sounds/bomb-sound.wav")
+UpgradeSound = pygame.mixer.Sound("sounds/upgrade.wav")
+
+pygame.display.set_icon(Icon)

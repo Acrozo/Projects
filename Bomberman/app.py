@@ -20,13 +20,23 @@ Logo = pygame.image.load("images/IntroLogo.png")
 StartButton = pygame.image.load("images/startbutton1.png")
 QuitButton = pygame.image.load("images/quit1.png")
 Selector = pygame.image.load("images/selectoricon.png")
+
+Icon = pygame.image.load("images/icon.png")
 music = pygame.mixer.music.load("sounds/Intro.mp3")
 BombSound = pygame.mixer.Sound("sounds/bomb-sound.wav")
+UpgradeSound = pygame.mixer.Sound("sounds/upgrade.wav")
+ChooseSound = pygame.mixer.Sound("sounds/choose.wav")
+
+pygame.display.set_icon(Icon)
 
 run = True
 _BombDown = False
 Exploding = False
+
 Bricks_Generated = False
+BorderGenerated = False
+HardWallsGenerated = False
+
 PassableRight = True
 PassableLeft = True
 PassableUp = True
@@ -48,6 +58,8 @@ Not_Allowed_Pos = []
 Not_Allowed_Walls = [[32, 32], [64, 32], [32, 64]]
 BrickWallList = []
 BonusList = []
+BorderPos = []
+HardWalls = []
 
 def fade(width, height):
     fade = pygame.Surface((width, height))
@@ -83,10 +95,13 @@ def GameIntro():
                         SelectorPosition += 1
                 if event.key == pygame.K_RETURN:
                     if SelectorPosition == 1:
+                        pygame.mixer.music.stop()
+                        ChooseSound.play()
                         quit()
                     elif SelectorPosition == 0:
-                        intro = False
                         pygame.mixer.music.stop()
+                        ChooseSound.play()
+                        intro = False
                         fade(608, 608)
 
         pygame.display.update()
@@ -98,24 +113,27 @@ def Bomber():
 
 
 def CreateBackground():
-    global Bricks_Generated
+    global Bricks_Generated, BorderGenerated, HardWallsGenerated
     for initialX in range(0, 608, 32):
         for initialY in range(0, 608, 32):
             win.blit(GroundBlock, (initialX, initialY))
 
-    for borderpos in range(0, 608, 32):
-        for edgepos in [0, 576]:
-            Not_Allowed_Pos.append([borderpos, edgepos])
-            Not_Allowed_Pos.append([edgepos, borderpos])
-            Not_Allowed_Walls.append([borderpos, edgepos])
-            Not_Allowed_Walls.append([edgepos, borderpos])
-            win.blit(Wall, (borderpos, edgepos))
-            win.blit(Wall, (edgepos, borderpos))
+    if BorderGenerated == False:
+        for borderpos in range(0, 608, 32):
+            for edgepos in [0, 576]:
+                Not_Allowed_Pos.append([borderpos, edgepos])
+                Not_Allowed_Pos.append([edgepos, borderpos])
+                Not_Allowed_Walls.append([borderpos, edgepos])
+                Not_Allowed_Walls.append([edgepos, borderpos])
+                BorderPos.append([edgepos, borderpos])
+                BorderPos.append([borderpos, edgepos])
 
-    for break1 in range(64, 576, 64):
-        for break2 in range(64, 576, 64):
-                Not_Allowed_Pos.append([break1, break2])
-                win.blit(Wall, (break1, break2))
+
+    if HardWallsGenerated == False:
+        for HardWalli in range(64, 576, 64):
+            for HardWallj in range(64, 576, 64):
+                HardWalls.append([HardWalli, HardWallj])
+                Not_Allowed_Pos.append([HardWalli, HardWallj])
 
     if Bricks_Generated == False:
         for brickwall in range(0, 608, 32):
@@ -125,13 +143,20 @@ def CreateBackground():
                         BrickWallList.append([brickwall, brickwall1])
 
     Bricks_Generated = True
+    BorderGenerated = True
+    HardWallsGenerated = True
 
     for x in BonusList:
         win.blit(BonusDistanceUpgrade, x)
 
+    for Border in BorderPos:
+        win.blit(Wall, Border)
+
     for brickwalll in BrickWallList:
         win.blit(BreakableWall, brickwalll)
 
+    for HardWall in HardWalls:
+        win.blit(Wall, HardWall)
 
 
 def BombDown():
@@ -230,6 +255,7 @@ while run:
                         posX -= 32
                         print(posX, posY)
                         if [posX, posY] in BonusList:
+                            UpgradeSound.play()
                             BombRange += 1
                             BonusList.remove([posX, posY])
 
@@ -240,6 +266,7 @@ while run:
                         posX += 32
                         print(posX, posY)
                         if [posX, posY] in BonusList:
+                            UpgradeSound.play()
                             BombRange += 1
                             BonusList.remove([posX, posY])
 
@@ -250,8 +277,10 @@ while run:
                         posY -= 32
                         print(posX, posY)
                         if [posX, posY] in BonusList:
+                            UpgradeSound.play()
                             BombRange += 1
                             BonusList.remove([posX, posY])
+
             if event.key == pygame.K_DOWN:
                 way = 0
                 if not [posX, posY + 32] in Not_Allowed_Pos:
@@ -259,6 +288,7 @@ while run:
                         posY += 32
                         print(posX, posY)
                         if [posX, posY] in BonusList:
+                            UpgradeSound.play()
                             BombRange += 1
                             BonusList.remove([posX, posY])
 
