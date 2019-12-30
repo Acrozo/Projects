@@ -16,6 +16,12 @@ Bomberman1 = [pygame.image.load("images/bomber-down.png"), pygame.image.load("im
 Bomb = pygame.image.load("images/bomb.png")
 Explosion = pygame.image.load("images/explosion.png")
 BonusDistanceUpgrade = pygame.image.load("images/distanceupgrade.png")
+Logo = pygame.image.load("images/IntroLogo.png")
+StartButton = pygame.image.load("images/startbutton1.png")
+QuitButton = pygame.image.load("images/quit1.png")
+Selector = pygame.image.load("images/selectoricon.png")
+music = pygame.mixer.music.load("sounds/Intro.mp3")
+BombSound = pygame.mixer.Sound("sounds/bomb-sound.wav")
 
 run = True
 _BombDown = False
@@ -26,8 +32,11 @@ PassableLeft = True
 PassableUp = True
 PassableDown = True
 
+black = 0, 0, 0
 BombRange = 3
 BombAmmount = 0
+
+SelectorPosition = 0
 
 way = 0
 posX = 32
@@ -39,6 +48,49 @@ Not_Allowed_Pos = []
 Not_Allowed_Walls = [[32, 32], [64, 32], [32, 64]]
 BrickWallList = []
 BonusList = []
+
+def fade(width, height):
+    fade = pygame.Surface((width, height))
+    fade.fill((0,0,0))
+    for alpha in range(0, 300):
+        fade.set_alpha(alpha)
+        win.blit(fade, (0,0))
+        pygame.display.update()
+        pygame.time.delay(5)
+
+def GameIntro():
+    global SelectorPosition
+    intro = True
+
+    while intro:
+        win.fill(black)
+        win.blit(Logo, (153, 50))
+        win.blit(StartButton, (260, 300))
+        win.blit(QuitButton, (270, 350))
+        if SelectorPosition == 0:
+            win.blit(Selector, (230, 305))
+        elif SelectorPosition == 1:
+            win.blit(Selector, (230, 355))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    if not SelectorPosition == 0:
+                        SelectorPosition -= 1
+                if event.key == pygame.K_DOWN:
+                    if not SelectorPosition == 1:
+                        SelectorPosition += 1
+                if event.key == pygame.K_RETURN:
+                    if SelectorPosition == 1:
+                        quit()
+                    elif SelectorPosition == 0:
+                        intro = False
+                        pygame.mixer.music.stop()
+                        fade(608, 608)
+
+        pygame.display.update()
+
 
 def Bomber():
     CreateBackground()
@@ -96,7 +148,6 @@ def BombDown():
 
 def Explode():
     global ExplosionTime, Exploding, PassableUp, PassableDown, PassableLeft, PassableRight
-
     if ExplosionTime + 2000 > Time1 and Exploding == True:
         for distance in range(0, BombRange, 1):
             if not [BombPosX+32*distance, BombPosY] in Not_Allowed_Pos and PassableRight:
@@ -106,6 +157,7 @@ def Explode():
                         PassableRight = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
+                BombSound.play()
                 win.blit(Explosion, (BombPosX +32*distance, BombPosY))
             else:
                 PassableRight = False
@@ -117,6 +169,7 @@ def Explode():
                         PassableLeft = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
+                BombSound.play()
                 win.blit(Explosion, (BombPosX-32*distance, BombPosY))
             else:
                 PassableLeft = False
@@ -128,6 +181,7 @@ def Explode():
                         PassableDown = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
+                BombSound.play()
                 win.blit(Explosion, (BombPosX, BombPosY-32*distance))
             else:
                 PassableDown = False
@@ -139,6 +193,7 @@ def Explode():
                         PassableUp = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
+                BombSound.play()
                 win.blit(Explosion, (BombPosX, BombPosY+32*distance))
             else:
                 PassableUp = False
@@ -153,6 +208,12 @@ def Explode():
 
 Time1 = pygame.time.get_ticks()
 ExplosionTime = Time1
+
+pygame.mixer.music.play(-1)
+GameIntro()
+
+music = pygame.mixer.music.load("sounds/Gameplay.mp3")
+pygame.mixer.music.play(-1)
 
 while run:
     clock.tick(30)
