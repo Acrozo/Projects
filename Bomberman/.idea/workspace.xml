@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a5d4e69f-d9b4-4945-8c36-42fffab984fe" name="Default Changelist" comment="" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,21 +15,16 @@
     </option>
   </component>
   <component name="ProjectId" id="1VZxXRBUoIuVCEDjQprCbUMZHs6" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Python.app">
     <configuration name="123" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -82,6 +76,18 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -94,5 +100,63 @@
       <updated>1577474457943</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="579" y="184" key="FileChooserDialogImpl" timestamp="1577727353089">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="579" y="184" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1577727353089" />
+    <state width="1578" height="83" key="GridCell.Tab.0.bottom" timestamp="1577895076123">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="83" key="GridCell.Tab.0.bottom/0.0.1600.860@0.0.1600.860" timestamp="1577895076123" />
+    <state width="1578" height="83" key="GridCell.Tab.0.center" timestamp="1577895076122">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="83" key="GridCell.Tab.0.center/0.0.1600.860@0.0.1600.860" timestamp="1577895076122" />
+    <state width="1578" height="83" key="GridCell.Tab.0.left" timestamp="1577895076121">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="83" key="GridCell.Tab.0.left/0.0.1600.860@0.0.1600.860" timestamp="1577895076121" />
+    <state width="1578" height="83" key="GridCell.Tab.0.right" timestamp="1577895076122">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="83" key="GridCell.Tab.0.right/0.0.1600.860@0.0.1600.860" timestamp="1577895076122" />
+    <state width="1578" height="270" key="GridCell.Tab.1.bottom" timestamp="1577809763015">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="270" key="GridCell.Tab.1.bottom/0.0.1600.860@0.0.1600.860" timestamp="1577809763015" />
+    <state width="1578" height="270" key="GridCell.Tab.1.center" timestamp="1577809763015">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="270" key="GridCell.Tab.1.center/0.0.1600.860@0.0.1600.860" timestamp="1577809763015" />
+    <state width="1578" height="270" key="GridCell.Tab.1.left" timestamp="1577809763015">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="270" key="GridCell.Tab.1.left/0.0.1600.860@0.0.1600.860" timestamp="1577809763015" />
+    <state width="1578" height="270" key="GridCell.Tab.1.right" timestamp="1577809763015">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1578" height="270" key="GridCell.Tab.1.right/0.0.1600.860@0.0.1600.860" timestamp="1577809763015" />
+    <state x="301" y="61" key="SettingsEditor" timestamp="1577727798218">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="301" y="61" key="SettingsEditor/0.0.1600.860@0.0.1600.860" timestamp="1577727798218" />
+    <state x="501" y="252" key="com.intellij.ide.util.TipDialog" timestamp="1577809891455">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="501" y="252" key="com.intellij.ide.util.TipDialog/0.0.1600.860@0.0.1600.860" timestamp="1577809891455" />
+    <state x="371" y="165" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1577808431900">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="371" y="165" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1600.860@0.0.1600.860" timestamp="1577808431900" />
+    <state x="432" y="0" width="736" height="860" key="find.popup" timestamp="1577798425133">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="432" y="0" width="736" height="860" key="find.popup/0.0.1600.860@0.0.1600.860" timestamp="1577798425133" />
+    <state x="863" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1577819103018">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="863" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1577819103018" />
   </component>
 </project>

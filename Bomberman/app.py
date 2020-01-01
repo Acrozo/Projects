@@ -1,5 +1,4 @@
 import pygame
-import time
 import random
 
 pygame.init()
@@ -20,6 +19,7 @@ Logo = pygame.image.load("images/IntroLogo.png")
 StartButton = pygame.image.load("images/startbutton1.png")
 QuitButton = pygame.image.load("images/quit1.png")
 Selector = pygame.image.load("images/selectoricon.png")
+BallonImage = [pygame.image.load("images/ballonleft.png"), pygame.image.load("images/ballonright.png")]
 
 Icon = pygame.image.load("images/icon.png")
 music = pygame.mixer.music.load("sounds/Intro.mp3")
@@ -36,23 +36,34 @@ Exploding = False
 Bricks_Generated = False
 BorderGenerated = False
 HardWallsGenerated = False
+ExplodedSound = False
+BallonPosGenerated = False
 
+intro = True
 PassableRight = True
 PassableLeft = True
 PassableUp = True
 PassableDown = True
+BallonDead= False
+
 
 black = 0, 0, 0
-BombRange = 3
+BombRange = 2
 BombAmmount = 0
+ExplosionDuration = 1000  # miliseconds
+BombDuration = 3000  # miliseconds
 
 SelectorPosition = 0
 
 way = 0
+ballonway = 0
+velocity = 32
 posX = 32
 posY = 32
-
+BallonTime = 0
 clock = pygame.time.Clock()
+
+Time1 = pygame.time.get_ticks()
 
 Not_Allowed_Pos = []
 Not_Allowed_Walls = [[32, 32], [64, 32], [32, 64]]
@@ -60,19 +71,25 @@ BrickWallList = []
 BonusList = []
 BorderPos = []
 HardWalls = []
+ExplosionPos = []
+BombPos = []
+
+
+BallonTime = 0
+
 
 def fade(width, height):
     fade = pygame.Surface((width, height))
-    fade.fill((0,0,0))
+    fade.fill((0, 0, 0))
     for alpha in range(0, 300):
         fade.set_alpha(alpha)
-        win.blit(fade, (0,0))
+        win.blit(fade, (0, 0))
         pygame.display.update()
         pygame.time.delay(5)
 
+
 def GameIntro():
-    global SelectorPosition
-    intro = True
+    global SelectorPosition, intro
 
     while intro:
         win.fill(black)
@@ -108,7 +125,6 @@ def GameIntro():
 
 
 def Bomber():
-    CreateBackground()
     win.blit(Bomberman1[way], (posX, posY))
 
 
@@ -127,7 +143,6 @@ def CreateBackground():
                 Not_Allowed_Walls.append([edgepos, borderpos])
                 BorderPos.append([edgepos, borderpos])
                 BorderPos.append([borderpos, edgepos])
-
 
     if HardWallsGenerated == False:
         for HardWalli in range(64, 576, 64):
@@ -162,7 +177,8 @@ def CreateBackground():
 def BombDown():
     global bombtime, _BombDown, BombAmmount, ExplosionTime, Exploding
     if _BombDown == True:
-        if bombtimer + 3000 > Time1:
+        if bombtimer + BombDuration > Time1:
+            BombPos.append([BombPosX, BombPosY])
             win.blit(Bomb, (BombPosX, BombPosY))
         else:
             Exploding = True
@@ -171,59 +187,138 @@ def BombDown():
             ExplosionTime = Time1
             Explode()
 
+
+def BallonEnemy():
+    global BallonPosGenerated, BallonPosX, BallonPosY, ballonway, BallonTime, BallonPos
+    if BallonPosGenerated == False:
+        BallonPosX = random.randrange(0, 608, 32)
+        BallonPosY = random.randrange(0, 608, 32)
+        BallonPos = [BallonPosX, BallonPosY]
+
+        for BalPos in Not_Allowed_Pos:
+            if not BalPos in BallonPos:
+                if not BalPos in BorderPos:
+                    BallonPosGenerated = True
+
+    if BallonPosGenerated == True and BallonTime + 2000 < Time1 and BallonDead == False:
+        direction = random.randint(0, 3)
+        if direction == 1:
+            if not [BallonPosX + velocity, BallonPosY] in HardWalls:
+                if not [BallonPosX + velocity, BallonPosY] in BorderPos:
+                    ballonway = 1
+                    BallonPosX += velocity
+                    BallonTime = Time1
+
+        elif direction == 0:
+            if not [BallonPosX - velocity, BallonPosY] in HardWalls:
+                if not [BallonPosX - velocity, BallonPosY] in BorderPos:
+                    ballonway = 0
+                    BallonPosX -= velocity
+                    BallonTime = Time1
+        elif direction == 2:
+            if not [BallonPosX, BallonPosY + velocity] in HardWalls:
+                if not [BallonPosX, BallonPosY + velocity] in BorderPos:
+                    BallonPosY += velocity
+                    BallonTime = Time1
+        elif direction == 3:
+            if not [BallonPosX, BallonPosY - velocity] in HardWalls:
+                if not [BallonPosX, BallonPosY - velocity] in BorderPos:
+                    BallonPosY -= velocity
+                    BallonTime = Time1
+
+    if BallonDead == False:
+        win.blit(BallonImage[ballonway], [BallonPosX, BallonPosY])
+
+    if BallonPos == [posX, posY]:
+        quit()
+
+
 def Explode():
-    global ExplosionTime, Exploding, PassableUp, PassableDown, PassableLeft, PassableRight
-    if ExplosionTime + 2000 > Time1 and Exploding == True:
+    global ExplosionTime, Exploding, PassableUp, PassableDown, PassableLeft, PassableRight, ExplodedSound, BallonPosX, BallPosY, BallonDead
+    if Exploding == True:
+        BombPos.clear()
         for distance in range(0, BombRange, 1):
-            if not [BombPosX+32*distance, BombPosY] in Not_Allowed_Pos and PassableRight:
+            if not [BombPosX + velocity * distance, BombPosY] in Not_Allowed_Pos and PassableRight:
                 for row in BrickWallList.copy():
-                    if row == [BombPosX+32*distance, BombPosY]:
+                    if row == [BombPosX + velocity * distance, BombPosY]:
                         BrickWallList.remove(row)
                         PassableRight = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
-                BombSound.play()
-                win.blit(Explosion, (BombPosX +32*distance, BombPosY))
+
+                if not [BombPosX + velocity * distance, BombPosY] in BonusList:
+                    ExplosionPos.append([BombPosX + velocity * distance, BombPosY])
+
+                if [BombPosX + velocity * distance, BombPosY] == [BallonPosX, BallonPosY]:
+                    PassableRight = False
+                    BallonDead = True
+
             else:
                 PassableRight = False
 
-            if not [BombPosX-32*distance, BombPosY] in Not_Allowed_Pos and PassableLeft:
+            if not [BombPosX - velocity * distance, BombPosY] in Not_Allowed_Pos and PassableLeft:
                 for row in BrickWallList.copy():
-                    if row == [BombPosX-32*distance, BombPosY]:
+                    if row == [BombPosX - velocity * distance, BombPosY]:
                         BrickWallList.remove(row)
                         PassableLeft = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
-                BombSound.play()
-                win.blit(Explosion, (BombPosX-32*distance, BombPosY))
+
+                if not [BombPosX - velocity * distance, BombPosY] in BonusList:
+                    ExplosionPos.append([BombPosX - velocity * distance, BombPosY])
+
+                if [BombPosX - velocity * distance, BombPosY] == [BallonPosX, BallonPosY]:
+                    PassableRight = False
+                    BallonDead = True
+
             else:
                 PassableLeft = False
 
-            if not [BombPosX, BombPosY-32*distance] in Not_Allowed_Pos and PassableDown:
+            if not [BombPosX, BombPosY + velocity * distance] in Not_Allowed_Pos and PassableDown:
                 for row in BrickWallList.copy():
-                    if row == [BombPosX, BombPosY-32*distance]:
-                        BrickWallList.remove(row)
+                    if row == [BombPosX, BombPosY + velocity * distance]:
                         PassableDown = False
+                        BrickWallList.remove(row)
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
-                BombSound.play()
-                win.blit(Explosion, (BombPosX, BombPosY-32*distance))
+
+                if not [BombPosX, BombPosY + velocity * distance] in BonusList:
+                    ExplosionPos.append([BombPosX, BombPosY + velocity * distance])
+
+                if [BombPosX, BombPosY + velocity * distance] == [BallonPosX, BallonPosY]:
+                    PassableRight = False
+                    BallonDead = True
+
             else:
                 PassableDown = False
 
-            if not [BombPosX, BombPosY+32*distance] in Not_Allowed_Pos and PassableUp:
+            if not [BombPosX, BombPosY - velocity * distance] in Not_Allowed_Pos and PassableUp:
                 for row in BrickWallList.copy():
-                    if row == [BombPosX, BombPosY+32*distance]:
+                    if row == [BombPosX, BombPosY - velocity * distance]:
                         BrickWallList.remove(row)
                         PassableUp = False
                         if random.randint(0, 2) == 1:
                             BonusList.append(row)
-                BombSound.play()
-                win.blit(Explosion, (BombPosX, BombPosY+32*distance))
+
+                if not [BombPosX, BombPosY - velocity * distance] in BonusList:
+                    ExplosionPos.append([BombPosX, BombPosY - velocity * distance])
+
+                if [BombPosX, BombPosY - velocity * distance] == [BallonPosX, BallonPosY]:
+                    PassableRight = False
+                    BallonDead = True
             else:
                 PassableUp = False
 
+    if ExplosionTime + ExplosionDuration > Time1:
+        for Y in ExplosionPos:
+            if not Y in Not_Allowed_Pos:
+                win.blit(Explosion, Y)
+            if ExplodedSound == False:
+                BombSound.play()
+                ExplodedSound = True
     else:
+        ExplosionPos.clear()
+        ExplodedSound = False
         Exploding = False
         PassableUp = True
         PassableDown = True
@@ -231,11 +326,16 @@ def Explode():
         PassableLeft = True
 
 
+def CheckIfDead():
+    if Exploding == True and [posX, posY] in ExplosionPos:
+        quit()
+
+
 Time1 = pygame.time.get_ticks()
+
 ExplosionTime = Time1
 
 pygame.mixer.music.play(-1)
-GameIntro()
 
 music = pygame.mixer.music.load("sounds/Gameplay.mp3")
 pygame.mixer.music.play(-1)
@@ -244,53 +344,54 @@ while run:
     clock.tick(30)
     Time1 = pygame.time.get_ticks()
     bombpos = posX, posY
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 way = 3
-                if not [posX - 32, posY] in Not_Allowed_Pos:
-                    if not [posX - 32, posY] in BrickWallList:
-                        posX -= 32
-                        print(posX, posY)
-                        if [posX, posY] in BonusList:
-                            UpgradeSound.play()
-                            BombRange += 1
-                            BonusList.remove([posX, posY])
+                if not [posX - velocity, posY] in Not_Allowed_Pos:
+                    if not [posX - velocity, posY] in BrickWallList:
+                        if not [posX - velocity, posY] in BombPos:
+                            posX -= velocity
+                            if [posX, posY] in BonusList:
+                                UpgradeSound.play()
+                                BombRange += 1
+                                BonusList.remove([posX, posY])
 
             if event.key == pygame.K_RIGHT:
                 way = 2
-                if not [posX + 32, posY] in Not_Allowed_Pos:
-                    if not [posX + 32, posY] in BrickWallList:
-                        posX += 32
-                        print(posX, posY)
-                        if [posX, posY] in BonusList:
-                            UpgradeSound.play()
-                            BombRange += 1
-                            BonusList.remove([posX, posY])
+                if not [posX + velocity, posY] in Not_Allowed_Pos:
+                    if not [posX + velocity, posY] in BrickWallList:
+                        if not [posX + velocity, posY] in BombPos:
+                            posX += velocity
+                            if [posX, posY] in BonusList:
+                                UpgradeSound.play()
+                                BombRange += 1
+                                BonusList.remove([posX, posY])
 
             if event.key == pygame.K_UP:
                 way = 1
-                if not [posX, posY - 32] in Not_Allowed_Pos:
-                    if not [posX, posY-32] in BrickWallList:
-                        posY -= 32
-                        print(posX, posY)
-                        if [posX, posY] in BonusList:
-                            UpgradeSound.play()
-                            BombRange += 1
-                            BonusList.remove([posX, posY])
+                if not [posX, posY - velocity] in Not_Allowed_Pos:
+                    if not [posX, posY - velocity] in BrickWallList:
+                        if not [posX, posY - velocity] in BombPos:
+                            posY -= velocity
+                            if [posX, posY] in BonusList:
+                                UpgradeSound.play()
+                                BombRange += 1
+                                BonusList.remove([posX, posY])
 
             if event.key == pygame.K_DOWN:
                 way = 0
-                if not [posX, posY + 32] in Not_Allowed_Pos:
-                    if not [posX, posY+32] in BrickWallList:
-                        posY += 32
-                        print(posX, posY)
-                        if [posX, posY] in BonusList:
-                            UpgradeSound.play()
-                            BombRange += 1
-                            BonusList.remove([posX, posY])
+                if not [posX, posY + velocity] in Not_Allowed_Pos:
+                    if not [posX, posY + velocity] in BrickWallList:
+                        if not [posX, posY + velocity] in BombPos:
+                            posY += velocity
+                            if [posX, posY] in BonusList:
+                                UpgradeSound.play()
+                                BombRange += 1
+                                BonusList.remove([posX, posY])
 
             if event.key == pygame.K_k:
                 if _BombDown == False and BombAmmount == 0 and Exploding == False:
@@ -298,11 +399,13 @@ while run:
                     _BombDown = True
                     bombtimer = Time1
                     BombAmmount += 1
-
+    GameIntro()
     CreateBackground()
     Bomber()
     BombDown()
     Explode()
+    CheckIfDead()
+    BallonEnemy()
     pygame.display.update()
 
 pygame.quit()
